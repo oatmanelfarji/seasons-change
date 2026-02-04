@@ -6,9 +6,15 @@ import {
 	TooltipContent,
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { getHemisphere } from "@/lib/location-utils";
 import { getCurrentSeason, seasonConfig } from "@/lib/season-utils";
 
-export function CurrentYear() {
+interface CurrentYearProps {
+	hemisphere?: "northern" | "southern" | "equator" | null;
+	latitude?: string | number;
+}
+
+export function CurrentYear({ hemisphere, latitude }: CurrentYearProps) {
 	const [mounted, setMounted] = useState(false);
 
 	useEffect(() => {
@@ -29,7 +35,11 @@ export function CurrentYear() {
 	const totalDays = Math.floor(totalDuration / (1000 * 60 * 60 * 24));
 	const daysRemaining = totalDays - daysPassed;
 
-	const currentSeason = getCurrentSeason();
+	const detectedHemisphere =
+		hemisphere ||
+		(latitude !== undefined ? getHemisphere(latitude) : "northern");
+
+	const currentSeason = getCurrentSeason(detectedHemisphere);
 	const config = currentSeason
 		? seasonConfig[currentSeason.name]
 		: {

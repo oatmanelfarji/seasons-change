@@ -8,7 +8,12 @@ export type Season = {
 };
 
 type SeasonsData = {
-	[year: string]: Season[];
+	"northern-hemisphere": {
+		[year: string]: Season[];
+	};
+	"southern-hemisphere": {
+		[year: string]: Season[];
+	};
 };
 
 export const seasonConfig = {
@@ -38,17 +43,24 @@ export const seasonConfig = {
 	},
 } as const;
 
-export function getCurrentSeason(): Season | null {
+export function getCurrentSeason(
+	hemisphere: "northern" | "southern" | "equator" = "northern",
+): Season | null {
 	const now = new Date();
 	const year = now.getFullYear();
 	// Use local time instead of UTC to avoid timezone issues (e.g., getting "tomorrow's" date)
 	const currentDate = now.toLocaleDateString("en-CA"); // YYYY-MM-DD format in local time
 
+	// Default to northern-hemisphere for equator or anything else
+	const hemisphereKey =
+		hemisphere === "southern" ? "southern-hemisphere" : "northern-hemisphere";
+
+	const data = seasonsData as SeasonsData;
+
 	/* 
     Check current year seasons first.
-    If we are in early months (Jan/Feb/Mar), the Winter season likely started in the previous year.
   */
-	const seasons = (seasonsData as SeasonsData)[year.toString()];
+	const seasons = data[hemisphereKey][year.toString()];
 	if (seasons) {
 		for (const season of seasons) {
 			if (currentDate >= season.startDate && currentDate <= season.endDate) {
@@ -58,7 +70,7 @@ export function getCurrentSeason(): Season | null {
 	}
 
 	// If not found, check the previous year (for Winter crossover)
-	const prevYearSeasons = (seasonsData as SeasonsData)[(year - 1).toString()];
+	const prevYearSeasons = data[hemisphereKey][(year - 1).toString()];
 	if (prevYearSeasons) {
 		for (const season of prevYearSeasons) {
 			if (currentDate >= season.startDate && currentDate <= season.endDate) {
