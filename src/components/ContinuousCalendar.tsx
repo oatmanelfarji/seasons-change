@@ -20,6 +20,9 @@
  */
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import seasonStartData from "@/data/season-start.json";
+import { useCountry } from "@/lib/country-context";
+import { getHemisphere } from "@/lib/location-utils";
 import { cn } from "@/lib/utils";
 
 // Day labels for the calendar header row
@@ -48,12 +51,87 @@ interface ContinuousCalendarProps {
 
 export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 	const [mounted, setMounted] = useState(false);
+	const { selectedCountry } = useCountry();
 
 	useEffect(() => {
 		setMounted(true);
 	}, []);
 
 	const today = useMemo(() => new Date(), []);
+
+	// Determine hemisphere for correct seasonal labeling
+	const hemisphere = useMemo(() => {
+		if (!selectedCountry) {
+			return "northern";
+		}
+		return getHemisphere(selectedCountry.latitude);
+	}, [selectedCountry]);
+
+	// Create seasonal data for mappings and color ranges
+	const seasonalData = useMemo(() => {
+		const startsMap: Record<string, { title: string; seasonName: string }> = {};
+
+		// Process sorted events for range calculation
+		const events = [...seasonStartData]
+			.map((item) => {
+				const dateStr = item.startTime.split("T")[0];
+				let baseSeason = "spring";
+				if (item.title.toLowerCase().includes("summer")) {
+					baseSeason = "summer";
+				} else if (item.title.toLowerCase().includes("autumn")) {
+					baseSeason = "autumn";
+				} else if (item.title.toLowerCase().includes("winter")) {
+					baseSeason = "winter";
+				}
+
+				let seasonName = baseSeason;
+				if (hemisphere === "southern") {
+					const swaps: Record<string, string> = {
+						spring: "autumn",
+						summer: "winter",
+						autumn: "spring",
+						winter: "summer",
+					};
+					seasonName = swaps[baseSeason] || baseSeason;
+				}
+
+				return { dateStr, seasonName };
+			})
+			.sort((a, b) => a.dateStr.localeCompare(b.dateStr));
+
+		// Populate starts map for the badges
+		for (const event of events) {
+			startsMap[event.dateStr] = {
+				title: `${event.seasonName.charAt(0).toUpperCase()}${event.seasonName.slice(1)} Starts`,
+				seasonName: event.seasonName,
+			};
+		}
+
+		return { startsMap, events };
+	}, [hemisphere]);
+
+	/**
+	 * Helper to get the season name for a specific date string (YYYY-MM-DD)
+	 */
+	const getSeasonForDate = useCallback(
+		(dateStr: string) => {
+			const events = seasonalData.events;
+			if (events.length === 0) return "spring";
+
+			// Find the latest event that is on or before the given date
+			let foundSeason = events[0].seasonName;
+			for (const event of events) {
+				if (event.dateStr <= dateStr) {
+					foundSeason = event.seasonName;
+				} else {
+					// Events are sorted, so we can stop once we pass the target date
+					break;
+				}
+			}
+			return foundSeason;
+		},
+		[seasonalData],
+	);
 
 	// Refs to each day cell for scroll targeting and IntersectionObserver
 	const dayRefs = useRef<(HTMLElement | null)[]>([]);
@@ -272,6 +350,11 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 						currentDate.getDate() === day &&
 						currentDate.getFullYear() === year;
 
+					// Check if this day is a season start day
+					const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+					const seasonStart = seasonalData.startsMap[dateStr];
+					const daySeason = getSeasonForDate(dateStr);
+
 					return (
 						// Day cell container
 						<button
@@ -287,10 +370,17 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 								// Base styles: responsive sizing with aspect ratio
 								"relative z-10 group aspect-square w-full grow cursor-pointer rounded-xl border bg-transparent p-0 text-left font-medium transition-all duration-300",
 								// Hover & Focus state: highlight, scale, and add depth
-								"hover:z-20 hover:border-primary hover:scale-[1.02] hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5",
+								"hover:z-20 hover:border-primary hover:scale-[1.02] hover:bg-primary/10 hover:shadow-lg hover:shadow-primary/5",
 								"focus:z-20 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50",
 								// Responsive adjustments
 								"sm:rounded-2xl sm:border-2 lg:rounded-3xl",
+								// Seasonal highlighting for all days
+								`theme-${daySeason}`,
+								// Subtle background for the entire season
+								"bg-primary/2",
+								// Pronounced background/border for start days
+								seasonStart &&
+									"border-primary/40 bg-primary/5 shadow-inner shadow-primary/5",
 							)}
 						>
 							{/* Day number badge */}
@@ -307,6 +397,21 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 								{day}
 							</span>
 
+							{/* Season indicator badge */}
+							{seasonStart && (
+								<div
+									className={cn(
+										"absolute right-1 bottom-1 flex items-center justify-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-tight text-primary-foreground sm:right-2 sm:bottom-2 sm:px-2 sm:py-1 sm:text-[10px] lg:scale-110",
+										`theme-${seasonStart.seasonName} bg-primary shadow-sm`,
+									)}
+								>
+									<span className="hidden sm:inline">{seasonStart.title}</span>
+									<span className="sm:hidden">
+										{seasonStart.title.split(" ")[0]}
+									</span>
+								</div>
+							)}
+
 							{/* Month label - shown on first day of each month */}
 							{isNewMonth && (
 								<span className="absolute bottom-0.5 left-0 w-full truncate px-1.5 text-sm font-semibold text-muted-foreground/50 sm:bottom-0 sm:text-lg lg:bottom-2.5 lg:left-3.5 lg:-mb-1 lg:w-fit lg:px-0 lg:text-xl 2xl:mb-[-4px] 2xl:text-2xl">
@@ -315,23 +420,25 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 							)}
 
 							{/* Add event button - appears on hover (placeholder for future functionality) */}
-							<span className="absolute right-2 top-2 rounded-full opacity-0 transition-all group-hover:opacity-100">
-								<svg
-									className="size-8 scale-90 text-primary transition-all hover:scale-100 group-focus:scale-100"
-									aria-hidden="true"
-									xmlns="http://www.w3.org/2000/svg"
-									width="24"
-									height="24"
-									fill="currentColor"
-									viewBox="0 0 24 24"
-								>
-									<path
-										fillRule="evenodd"
-										d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z"
-										clipRule="evenodd"
-									/>
-								</svg>
-							</span>
+							{!seasonStart && (
+								<span className="absolute right-2 top-2 rounded-full opacity-0 transition-all group-hover:opacity-100">
+									<svg
+										className="size-8 scale-90 text-primary transition-all hover:scale-100 group-focus:scale-100"
+										aria-hidden="true"
+										xmlns="http://www.w3.org/2000/svg"
+										width="24"
+										height="24"
+										fill="currentColor"
+										viewBox="0 0 24 24"
+									>
+										<path
+											fillRule="evenodd"
+											d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4.243a1 1 0 1 0-2 0V11H7.757a1 1 0 1 0 0 2H11v3.243a1 1 0 1 0 2 0V13h3.243a1 1 0 1 0 0-2H13V7.757Z"
+											clipRule="evenodd"
+										/>
+									</svg>
+								</span>
+							)}
 						</button>
 					);
 				})}
@@ -339,7 +446,7 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 		));
 
 		return calendar;
-	}, [year, handleDayClick]);
+	}, [year, handleDayClick, seasonalData, getSeasonForDate]);
 
 	/**
 	 * IntersectionObserver effect - tracks which month is currently visible
