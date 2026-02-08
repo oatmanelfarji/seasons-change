@@ -21,7 +21,11 @@ export function CurrentYear({ hemisphere, latitude }: CurrentYearProps) {
 		setMounted(true);
 	}, []);
 
-	if (!mounted) return null;
+	if (!mounted) {
+		return (
+			<div className="flex items-center gap-2 min-w-48 h-8 rounded-full bg-muted animate-pulse" />
+		);
+	}
 
 	const now = new Date();
 	const startOfYear = new Date(now.getFullYear(), 0, 1);
@@ -44,9 +48,9 @@ export function CurrentYear({ hemisphere, latitude }: CurrentYearProps) {
 		? seasonConfig[currentSeason.name]
 		: {
 				icon: CalendarClock,
-				bgColor: "bg-orange-100 dark:bg-orange-900/30",
-				iconColor: "text-white dark:text-white",
-				progressColor: "bg-orange-600 dark:bg-orange-400",
+				bgColor: "bg-primary/10",
+				iconColor: "text-primary",
+				progressColor: "bg-primary",
 			};
 
 	return (

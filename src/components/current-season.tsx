@@ -43,7 +43,11 @@ export function CurrentSeason({ hemisphere, latitude }: CurrentSeasonProps) {
 		setMounted(true);
 	}, []);
 
-	if (!mounted) return null;
+	if (!mounted) {
+		return (
+			<div className="flex items-center gap-2 min-w-48 h-8 rounded-full bg-muted animate-pulse" />
+		);
+	}
 
 	// Determine hemisphere: prioritizing explicit prop, then calculating from latitude, defaulting to northern
 	const detectedHemisphere =

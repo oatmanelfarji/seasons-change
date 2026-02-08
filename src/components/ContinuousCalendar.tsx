@@ -19,7 +19,7 @@
  * />
  */
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 // Day labels for the calendar header row
@@ -47,10 +47,16 @@ interface ContinuousCalendarProps {
 }
 
 export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
-	const today = new Date();
+	const [mounted, setMounted] = useState(false);
+
+	useEffect(() => {
+		setMounted(true);
+	}, []);
+
+	const today = useMemo(() => new Date(), []);
 
 	// Refs to each day cell for scroll targeting and IntersectionObserver
-	const dayRefs = useRef<(HTMLDivElement | null)[]>([]);
+	const dayRefs = useRef<(HTMLElement | null)[]>([]);
 
 	// Track if initial scroll to today has been done
 	const hasScrolledToToday = useRef(false);
@@ -82,7 +88,7 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 	 * @param monthIndex - The month to scroll to (0-11)
 	 * @param dayIndex - The day of the month to scroll to (1-31)
 	 */
-	const scrollToDay = (monthIndex: number, dayIndex: number) => {
+	const scrollToDay = useCallback((monthIndex: number, dayIndex: number) => {
 		// Find the day cell element by matching data attributes
 		const targetDayIndex = dayRefs.current.findIndex(
 			(ref) =>
@@ -128,7 +134,7 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 				});
 			}
 		}
-	};
+	}, []);
 
 	// Year navigation handlers
 	const handlePrevYear = () => setYear((prevYear) => prevYear - 1);
@@ -167,17 +173,20 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 	 * Handles day cell click - normalizes month for padding days from previous year
 	 * Padding days have month = -1, which maps to December of previous year
 	 */
-	const handleDayClick = (day: number, month: number, clickedYear: number) => {
-		if (!onClick) {
-			return;
-		}
-		if (month < 0) {
-			// Padding days from previous year's December
-			onClick(day, 11, clickedYear - 1);
-		} else {
-			onClick(day, month, clickedYear);
-		}
-	};
+	const handleDayClick = useCallback(
+		(day: number, month: number, clickedYear: number) => {
+			if (!onClick) {
+				return;
+			}
+			if (month < 0) {
+				// Padding days from previous year's December
+				onClick(day, 11, clickedYear - 1);
+			} else {
+				onClick(day, month, clickedYear);
+			}
+		},
+		[onClick],
+	);
 
 	/**
 	 * Generates the calendar grid - memoized to only rebuild when year or onClick changes.
@@ -190,8 +199,8 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 		 * Generates array of all days to display for the year.
 		 * Includes padding days at start/end to complete the first and last weeks.
 		 */
-		const daysInYear = (): { month: number; day: number }[] => {
-			const days = [];
+		const daysInYear = (): { month: number; day: number; key: string }[] => {
+			const days: { month: number; day: number; key: string }[] = [];
 
 			// Get what day of week January 1st falls on (0=Sun, 6=Sat)
 			const startDayOfWeek = new Date(year, 0, 1).getDay();
@@ -201,7 +210,12 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 			if (startDayOfWeek < 6) {
 				for (let i = 0; i < startDayOfWeek; i++) {
 					// month = -1 indicates these are from previous year
-					days.push({ month: -1, day: 32 - startDayOfWeek + i });
+					const day = 32 - startDayOfWeek + i;
+					days.push({
+						month: -1,
+						day,
+						key: `padding-start-${day}`,
+					});
 				}
 			}
 
@@ -211,7 +225,7 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 				const daysInMonth = new Date(year, month + 1, 0).getDate();
 
 				for (let day = 1; day <= daysInMonth; day++) {
-					days.push({ month, day });
+					days.push({ month, day, key: `month-${month}-${day}` });
 				}
 			}
 
@@ -220,7 +234,11 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 			if (lastWeekDayCount > 0) {
 				const extraDaysNeeded = 7 - lastWeekDayCount;
 				for (let day = 1; day <= extraDaysNeeded; day++) {
-					days.push({ month: 0, day }); // Show as January of next year
+					days.push({
+						month: 0,
+						day,
+						key: `padding-end-${day}`,
+					}); // Show as January of next year
 				}
 			}
 
@@ -235,30 +253,13 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 			calendarWeeks.push(calendarDays.slice(i, i + 7));
 		}
 
-		/**
-		 * Keyboard handler for accessibility - allows selecting days with Enter or Space
-		 */
-		const handleKeyDown = (
-			event: React.KeyboardEvent,
-			day: number,
-			month: number,
-			clickedYear: number,
-		) => {
-			if (event.key === "Enter" || event.key === " ") {
-				event.preventDefault();
-				if (!onClick) return;
-				if (month < 0) {
-					onClick(day, 11, clickedYear - 1);
-				} else {
-					onClick(day, month, clickedYear);
-				}
-			}
-		};
-
 		// Build the calendar grid JSX
 		const calendar = calendarWeeks.map((week, weekIndex) => (
-			<div className="flex w-full" key={`week-${year}-${weekIndex}`}>
-				{week.map(({ month, day }, dayIndex) => {
+			<div
+				className="flex w-full gap-1 sm:gap-2"
+				key={`week-${year}-${week[0].key}`}
+			>
+				{week.map(({ month, day, key: dayKey }, dayIndex) => {
 					const index = weekIndex * 7 + dayIndex;
 
 					// Check if this is the first day of a new month (to show month label)
@@ -273,24 +274,23 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 
 					return (
 						// Day cell container
-						<div
-							key={`${year}-${month}-${day}-${dayIndex}`}
+						<button
+							type="button"
+							key={dayKey}
 							ref={(el) => {
 								dayRefs.current[index] = el;
 							}}
 							data-month={month}
 							data-day={day}
 							onClick={() => handleDayClick(day, month, year)}
-							onKeyDown={(e) => handleKeyDown(e, day, month, year)}
-							role="button"
-							tabIndex={0}
 							className={cn(
 								// Base styles: responsive sizing with aspect ratio
-								"relative z-10 m-[-0.5px] group aspect-square w-full grow cursor-pointer rounded-xl border font-medium transition-all",
-								// Hover state: highlight border and add ring
-								"hover:z-20 hover:border-primary hover:ring-2 hover:ring-primary/50",
+								"relative z-10 group aspect-square w-full grow cursor-pointer rounded-xl border bg-transparent p-0 text-left font-medium transition-all duration-300",
+								// Hover & Focus state: highlight, scale, and add depth
+								"hover:z-20 hover:border-primary hover:scale-[1.02] hover:bg-primary/5 hover:shadow-lg hover:shadow-primary/5",
+								"focus:z-20 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/50",
 								// Responsive adjustments
-								"sm:-m-px sm:rounded-2xl sm:border-2 lg:rounded-3xl",
+								"sm:rounded-2xl sm:border-2 lg:rounded-3xl",
 							)}
 						>
 							{/* Day number badge */}
@@ -315,10 +315,7 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 							)}
 
 							{/* Add event button - appears on hover (placeholder for future functionality) */}
-							<button
-								type="button"
-								className="absolute right-2 top-2 rounded-full opacity-0 transition-all focus:opacity-100 group-hover:opacity-100"
-							>
+							<span className="absolute right-2 top-2 rounded-full opacity-0 transition-all group-hover:opacity-100">
 								<svg
 									className="size-8 scale-90 text-primary transition-all hover:scale-100 group-focus:scale-100"
 									aria-hidden="true"
@@ -334,21 +331,22 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 										clipRule="evenodd"
 									/>
 								</svg>
-							</button>
-						</div>
+							</span>
+						</button>
 					);
 				})}
 			</div>
 		));
 
 		return calendar;
-	}, [year, onClick]);
+	}, [year, handleDayClick]);
 
 	/**
 	 * IntersectionObserver effect - tracks which month is currently visible
 	 * Observes the 15th day of each month as a proxy for month visibility.
 	 * Updates the month dropdown to match the visible month while scrolling.
 	 */
+	// biome-ignore lint/correctness/useExhaustiveDependencies: year trigger is needed to re-attach observers to new DOM elements after year change
 	useEffect(() => {
 		const calendarContainer = document.querySelector(".calendar-container");
 
@@ -382,28 +380,27 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 		return () => {
 			observer.disconnect();
 		};
-	}, []);
+	}, [year]);
 
 	/**
 	 * Initial scroll to today's date when calendar first loads
 	 */
-	// biome-ignore lint/correctness/useExhaustiveDependencies: Intentionally run once after initial render
 	useEffect(() => {
 		if (!hasScrolledToToday.current && dayRefs.current.length > 0) {
+			const now = new Date();
 			// Small delay to ensure DOM is fully rendered
 			const timer = setTimeout(() => {
-				scrollToDay(today.getMonth(), today.getDate());
+				scrollToDay(now.getMonth(), now.getDate());
 				hasScrolledToToday.current = true;
 			}, 100);
 			return () => clearTimeout(timer);
 		}
-	}, []);
+	}, [scrollToDay]);
 
 	/**
 	 * Handle pending scroll after year change
 	 * When year changes, we need to wait for re-render before scrolling
 	 */
-	// biome-ignore lint/correctness/useExhaustiveDependencies: scrollToDay is stable, only pendingScroll triggers this
 	useEffect(() => {
 		if (pendingScroll) {
 			// Small delay to ensure DOM is updated with new year's calendar
@@ -413,7 +410,13 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 			}, 100);
 			return () => clearTimeout(timer);
 		}
-	}, [pendingScroll]);
+	}, [pendingScroll, scrollToDay]);
+
+	if (!mounted) {
+		return (
+			<div className="w-full h-full bg-card animate-pulse rounded-t-2xl" />
+		);
+	}
 
 	// ─────────────────────────────────────────────────────────────────────────
 	// RENDER
@@ -522,7 +525,9 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 			</div>
 
 			{/* Calendar grid - all weeks/days */}
-			<div className="w-full px-5 pt-4 sm:px-8 sm:pt-6">{generateCalendar}</div>
+			<div className="flex flex-col gap-1 sm:gap-2 w-full px-5 pt-4 sm:px-8 sm:pt-6">
+				{generateCalendar}
+			</div>
 		</div>
 	);
 }

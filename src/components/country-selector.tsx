@@ -10,12 +10,33 @@ import {
 import countries from "@/data/countries.json";
 import { cn } from "@/lib/utils";
 
+export interface Timezone {
+	zoneName: string;
+	gmtOffset: number;
+	gmtOffsetName: string;
+	abbreviation: string;
+	tzName: string;
+}
+
+export interface Translations {
+	ar: string;
+	[key: string]: string;
+}
+
 export interface Country {
 	id: number;
 	name: string;
 	emoji: string;
 	iso2: string;
 	latitude: string;
+	native: string;
+	capital: string;
+	population: number | null;
+	subregion: string;
+	area_sq_km: number | null;
+	timezones: Timezone[];
+	translations: Translations;
+	wikiDataId: string;
 }
 
 interface CountrySelectorProps {
@@ -49,17 +70,14 @@ export function CountrySelector({
 				>
 					<span className="flex items-center gap-2 overflow-hidden truncate">
 						{selectedCountry ? (
-							<>
-								<span className="text-sm leading-none">
-									{selectedCountry.emoji}
-								</span>
-								<span className="truncate">{selectedCountry.name}</span>
-							</>
+							<span className="text-sm leading-none">
+								{selectedCountry.emoji}
+							</span>
 						) : (
 							placeholder
 						)}
 					</span>
-					<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+					<ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
 				</Button>
 			</DropdownMenuTrigger>
 			<DropdownMenuContent className="p-0" align="start">
