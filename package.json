@@ -1,5 +1,18 @@
 {
   "name": "seasons-change",
+  "version": "1.0.0",
+  "description": "A premium, atmospheric seasonal dashboard featuring real-time weather and dynamic themes.",
+  "keywords": [
+    "react",
+    "tailwindcss",
+    "tanstack-router",
+    "seasons",
+    "weather",
+    "dashboard",
+    "theming"
+  ],
+  "author": "oatman",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
