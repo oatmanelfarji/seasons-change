@@ -20,7 +20,7 @@ export function SelectedCountryInfo() {
 				<span className="text-3xl drop-shadow-lg group-hover:rotate-12 transition-transform duration-500">
 					{selectedCountry.emoji}
 				</span>
-				<div className="space-y-0.5">
+				<div className="flex flex-row items-center gap-2 space-y-0.5">
 					<h2 className="text-xl font-bold tracking-tight font-display">
 						{selectedCountry.name}
 					</h2>
@@ -30,30 +30,17 @@ export function SelectedCountryInfo() {
 								{selectedCountry.native}
 							</p>
 						)}
-					{selectedCountry.translations?.ar && (
-						<p className="text-lg font-bold text-primary" dir="rtl">
-							{selectedCountry.translations.ar}
-						</p>
-					)}
 				</div>
+				{selectedCountry.translations?.ar && (
+					<p className="text-lg font-bold text-primary" dir="rtl">
+						{selectedCountry.translations.ar}
+					</p>
+				)}
 			</div>
 
 			<div className="flex flex-col gap-2">
 				{[
-					{ label: "Region", value: selectedCountry.subregion, icon: "🌍" },
 					{ label: "Capital", value: selectedCountry.capital, icon: "🏛️" },
-					{
-						label: "Population",
-						value: selectedCountry.population?.toLocaleString(),
-						icon: "👥",
-					},
-					{
-						label: "Area",
-						value: selectedCountry.area_sq_km
-							? `${selectedCountry.area_sq_km.toLocaleString()} km²`
-							: null,
-						icon: "📐",
-					},
 					{
 						label: "Timezone",
 						value: selectedCountry.timezones?.[0]?.gmtOffsetName,
