@@ -9,8 +9,14 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as CountriesInfoRouteImport } from './routes/CountriesInfo'
 import { Route as IndexRouteImport } from './routes/index'
 
+const CountriesInfoRoute = CountriesInfoRouteImport.update({
+  id: '/CountriesInfo',
+  path: '/CountriesInfo',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -19,28 +25,39 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/CountriesInfo': typeof CountriesInfoRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/CountriesInfo': typeof CountriesInfoRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/CountriesInfo': typeof CountriesInfoRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/CountriesInfo'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/CountriesInfo'
+  id: '__root__' | '/' | '/CountriesInfo'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  CountriesInfoRoute: typeof CountriesInfoRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/CountriesInfo': {
+      id: '/CountriesInfo'
+      path: '/CountriesInfo'
+      fullPath: '/CountriesInfo'
+      preLoaderRoute: typeof CountriesInfoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -53,6 +70,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  CountriesInfoRoute: CountriesInfoRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -18,21 +18,21 @@ export function SeasonProgress({
 	return (
 		<div
 			className={cn(
-				"relative w-full h-10 rounded-2xl overflow-hidden border border-white/10 shadow-inner",
+				"relative w-full h-8 rounded-full overflow-hidden border border-border/20",
 				bgColor,
 			)}
 		>
 			{/* Progress indicator */}
 			<div
 				className={cn(
-					"absolute inset-0 h-full transition-all duration-1000 ease-smooth shine-effect",
+					"absolute inset-0 h-full transition-all duration-300",
 					progressColor,
 				)}
 				style={{ width: `${clampedValue}%` }}
 			/>
 
 			{/* Content overlay */}
-			<div className="relative flex items-center px-4 h-full pointer-events-none z-10">
+			<div className="relative flex items-center px-3 h-full pointer-events-none z-10">
 				{children}
 			</div>
 		</div>

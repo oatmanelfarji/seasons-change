@@ -401,11 +401,13 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 							{seasonStart && (
 								<div
 									className={cn(
-										"absolute right-1 bottom-1 flex items-center justify-center gap-1 rounded-full px-1.5 py-0.5 text-[8px] font-bold uppercase tracking-tight text-primary-foreground sm:right-2 sm:bottom-2 sm:px-2 sm:py-1 sm:text-[10px] lg:scale-110",
+										"absolute right-1 bottom-1 flex items-center justify-center gap-1 rounded-full px-1.5 py-0.5 text-[6px] font-bold uppercase tracking-tight text-primary-foreground sm:right-2 sm:bottom-2 sm:px-2 sm:py-1 sm:text-[10px] lg:scale-110",
 										`theme-${seasonStart.seasonName} bg-primary shadow-sm`,
 									)}
 								>
-									<span className="hidden sm:inline">{seasonStart.title}</span>
+									<span className="hidden sm:inline">
+										{seasonStart.title.split(" ")[0]}
+									</span>
 									<span className="sm:hidden">
 										{seasonStart.title.split(" ")[0]}
 									</span>
@@ -414,7 +416,7 @@ export function ContinuousCalendar({ onClick }: ContinuousCalendarProps) {
 
 							{/* Month label - shown on first day of each month */}
 							{isNewMonth && (
-								<span className="absolute bottom-0.5 left-0 w-full truncate px-1.5 text-sm font-semibold text-muted-foreground/50 sm:bottom-0 sm:text-lg lg:bottom-2.5 lg:left-3.5 lg:-mb-1 lg:w-fit lg:px-0 lg:text-xl 2xl:mb-[-4px] 2xl:text-2xl">
+								<span className="absolute bottom-0.5 left-0 w-full truncate px-1.5 text-sm font-semibold text-muted-foreground/50 sm:bottom-0 sm:text-base lg:bottom-2.5 lg:left-3.5 lg:-mb-1 lg:w-fit lg:px-0 lg:text-lg 2xl:mb-[-4px] 2xl:text-xl">
 									{monthNames[month]}
 								</span>
 							)}
