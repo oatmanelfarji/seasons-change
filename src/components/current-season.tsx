@@ -1,3 +1,4 @@
+import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { SeasonProgress } from "@/components/season-progress";
 import {
@@ -78,7 +79,7 @@ export function CurrentSeason({ hemisphere, latitude }: CurrentSeasonProps) {
 									className={`h-5 w-5 ${config.iconColor} drop-shadow-md`}
 								/>
 								<span
-									className={`text-xs font-bold ${config.iconColor} drop-shadow-md`}
+									className={`text-xs font-bold ${config.iconColor} drop-shadow-md capitalize`}
 								>
 									{currentSeason.name}
 								</span>
@@ -92,12 +93,57 @@ export function CurrentSeason({ hemisphere, latitude }: CurrentSeasonProps) {
 					</SeasonProgress>
 				</div>
 			</TooltipTrigger>
-			<TooltipContent side="bottom" sideOffset={8}>
-				<div className="flex flex-col gap-1">
-					<span className="font-semibold">Season: {currentSeason.name}</span>
-					<span>Start date: {currentSeason.startDate}</span>
-					<span>End date: {currentSeason.endDate}</span>
-					<span>Days remaining: {daysRemaining}</span>
+			<TooltipContent
+				side="bottom"
+				sideOffset={12}
+				className={`p-4 border-2 ${config.borderColor} bg-white/95 dark:bg-slate-950/95 backdrop-blur-md shadow-xl`}
+			>
+				<div className="flex flex-col gap-3 min-w-[200px]">
+					<div className="flex items-center justify-between">
+						<span
+							className={`text-lg font-black uppercase tracking-tighter ${config.iconColor}`}
+						>
+							{currentSeason.name}
+						</span>
+						<div
+							className={`p-1.5 rounded-full ${config.bgColor} border ${config.borderColor}/30`}
+						>
+							<Icon className={`h-4 w-4 ${config.iconColor}`} />
+						</div>
+					</div>
+
+					<div className={`space-y-1.5 border-y ${config.borderColor}/20 py-2`}>
+						<div className="flex justify-between text-xs">
+							<span className="text-muted-foreground">Hemisphere:</span>
+							<span className="font-semibold capitalize text-indigo-900 dark:text-indigo-100">
+								{detectedHemisphere}
+							</span>
+						</div>
+						<div className="flex justify-between text-xs">
+							<span className="text-muted-foreground">Interval:</span>
+							<span className="font-semibold text-indigo-900 dark:text-indigo-100">
+								{format(new Date(currentSeason.startDate), "MMM d")} —{" "}
+								{format(new Date(currentSeason.endDate), "MMM d")}
+							</span>
+						</div>
+						<div className="flex justify-between text-xs">
+							<span className="text-muted-foreground">Progress:</span>
+							<span className="font-semibold text-indigo-900 dark:text-indigo-100">
+								{Math.round(progress)}% Complete
+							</span>
+						</div>
+					</div>
+
+					<div className="pt-1 flex items-center justify-center gap-2">
+						<div
+							className={`h-1.5 w-1.5 rounded-full ${config.progressColor} animate-ping`}
+						/>
+						<span
+							className={`text-[10px] font-bold uppercase tracking-widest ${config.iconColor}`}
+						>
+							{daysRemaining} Days Until Transition
+						</span>
+					</div>
 				</div>
 			</TooltipContent>
 		</Tooltip>

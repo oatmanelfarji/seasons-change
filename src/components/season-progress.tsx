@@ -18,7 +18,7 @@ export function SeasonProgress({
 	return (
 		<div
 			className={cn(
-				"relative w-full h-8 rounded-full overflow-hidden border border-border/20",
+				"relative w-full h-12 rounded-full overflow-hidden border border-border/20",
 				bgColor,
 			)}
 		>

@@ -1,6 +1,9 @@
 import { TanStackDevtools } from "@tanstack/react-devtools";
+import type { QueryClient } from "@tanstack/react-query";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtoolsPanel } from "@tanstack/react-query-devtools";
 import {
-	createRootRoute,
+	createRootRouteWithContext,
 	HeadContent,
 	Link,
 	Scripts,
@@ -30,9 +33,12 @@ import {
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { CountryProvider, useCountry } from "@/lib/country-context";
 import { ThemeProvider } from "@/lib/theme-provider";
+import { queryClient } from "../query-client";
 import appCss from "../styles.css?url";
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<{
+	queryClient: QueryClient;
+}>()({
 	head: () => ({
 		meta: [
 			{
@@ -94,36 +100,42 @@ function RootDocument({ children }: { children: React.ReactNode }) {
 				<HeadContent />
 			</head>
 			<body>
-				<ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
-					<TooltipProvider>
-						<CountryProvider>
-							<SeasonThemeHandler />
-							<div className="mesh-bg">
-								<div className="mesh-circle mesh-circle-1" />
-								<div className="mesh-circle mesh-circle-2" />
-							</div>
-							<SidebarProvider>
-								<AppSidebar />
-								<SidebarInset className="noise-bg bg-background/80">
-									<RootHeader />
-									{children}
-								</SidebarInset>
-							</SidebarProvider>
-						</CountryProvider>
-					</TooltipProvider>
-					<TanStackDevtools
-						config={{
-							position: "bottom-right",
-						}}
-						plugins={[
-							{
-								name: "Tanstack Router",
-								render: <TanStackRouterDevtoolsPanel />,
-							},
-						]}
-					/>
-					<Scripts />
-				</ThemeProvider>
+				<QueryClientProvider client={queryClient}>
+					<ThemeProvider defaultTheme="system" storageKey="vite-ui-theme">
+						<TooltipProvider>
+							<CountryProvider>
+								<SeasonThemeHandler />
+								<div className="mesh-bg">
+									<div className="mesh-circle mesh-circle-1" />
+									<div className="mesh-circle mesh-circle-2" />
+								</div>
+								<SidebarProvider>
+									<AppSidebar />
+									<SidebarInset className="noise-bg bg-background/80">
+										<RootHeader />
+										{children}
+									</SidebarInset>
+								</SidebarProvider>
+							</CountryProvider>
+						</TooltipProvider>
+						<TanStackDevtools
+							config={{
+								position: "bottom-right",
+							}}
+							plugins={[
+								{
+									name: "Tanstack Router",
+									render: <TanStackRouterDevtoolsPanel />,
+								},
+								{
+									name: "React Query",
+									render: <ReactQueryDevtoolsPanel />,
+								},
+							]}
+						/>
+						<Scripts />
+					</ThemeProvider>
+				</QueryClientProvider>
 			</body>
 		</html>
 	);

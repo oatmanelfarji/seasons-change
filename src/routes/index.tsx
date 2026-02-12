@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import * as React from "react";
 import { ContinuousCalendar } from "@/components/ContinuousCalendar";
+import { CurrentAstroHouse } from "@/components/current-astro-house";
 import { CurrentSeason } from "@/components/current-season";
 import { CurrentYear } from "@/components/current-year";
 import { SelectedCountryInfo } from "@/components/selectedCountryInfo";
@@ -22,12 +23,13 @@ function App() {
 		<div className="flex flex-1 flex-col gap-8 p-8 pt-0 overflow-x-hidden min-w-0 stagger-in">
 			<div className="flex items-center justify-center gap-4">
 				{/* Progress bars */}
-				<div className="relative glass rounded-3xl flex flex-col shadow-xl shadow-primary/5 group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 overflow-hidden">
+				<div className="relative glass rounded-3xl flex flex-col shadow-xl shadow-primary/5 group transition-all duration-500 hover:shadow-2xl hover:shadow-primary/10 overflow-hidden max-w-4xl">
 					<div className="absolute top-0 right-0 -mr-10 -mt-10 w-48 h-48 bg-primary/10 rounded-full blur-2xl group-hover:bg-primary/20 transition-colors duration-700 pointer-events-none" />
 					<div className="absolute bottom-0 left-0 -ml-10 -mb-10 w-48 h-48 bg-accent/10 rounded-full blur-2xl group-hover:bg-accent/20 transition-colors duration-700 pointer-events-none" />
-					<div className="relative z-10 flex-1 flex flex-row gap-4 items-center justify-center p-6">
+					<div className="relative z-10 flex-1 flex flex-row flex-wrap gap-4 items-center justify-center p-6">
 						<CurrentSeason hemisphere={hemisphere} />
 						<CurrentYear hemisphere={hemisphere} />
+						<CurrentAstroHouse />
 					</div>
 				</div>
 			</div>

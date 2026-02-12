@@ -91,26 +91,30 @@ export function WeatherWidget() {
 	const weatherDesc = weatherDescriptions[weatherCode] || "Unknown";
 
 	return (
-		<div className="relative flex flex-col items-center gap-6 h-full justify-center p-6 group-hover:scale-105 transition-transform duration-500">
+		<div className="relative flex flex-col items-center gap-6 h-full justify-center p-16 group-hover:scale-105 transition-transform duration-500">
 			<div className="flex items-center justify-between w-full">
 				<div className="flex flex-col">
 					<h2 className="text-lg font-bold tracking-tight font-display">
 						{location}
 					</h2>
-					<p className="text-[10px] text-primary font-bold uppercase tracking-widest opacity-80">
-						{weatherDesc}
-					</p>
 				</div>
 				<div className="p-2 rounded-xl bg-primary/10 backdrop-blur-xl border border-primary/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
 					{weatherIcon}
 				</div>
 			</div>
 
-			<div className="flex items-baseline gap-1.5">
-				<span className="text-5xl font-bold tracking-tighter text-foreground font-display">
-					{Math.round(temperature)}
-				</span>
-				<span className="text-xl font-bold text-primary opacity-60">°C</span>
+			<div className="flex flex-col items-baseline gap-1.5">
+				<div className="flex items-center gap-1">
+					<span className="text-5xl font-bold tracking-tighter text-foreground font-display">
+						{Math.round(temperature)}
+					</span>
+					<span className="text-xl font-bold text-primary opacity-60">°C</span>
+				</div>
+				<div className="flex items-center justify-center">
+					<p className="text-[10px] text-primary font-bold uppercase tracking-widest opacity-80">
+						{weatherDesc}
+					</p>
+				</div>
 			</div>
 
 			<div className="grid grid-cols-3 w-full gap-3 mt-auto">

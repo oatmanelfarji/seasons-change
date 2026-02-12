@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { env } from "@/env";
 
 export interface WeatherData {
@@ -20,50 +20,35 @@ export interface WeatherData {
 }
 
 export function useWeather(location?: string) {
-	const [data, setData] = useState<WeatherData | null>(null);
-	const [loading, setLoading] = useState(false);
-	const [error, setError] = useState<string | null>(null);
+	const query = useQuery({
+		queryKey: ["weather", location],
+		queryFn: async (): Promise<WeatherData> => {
+			if (!location) throw new Error("Location is required");
 
-	useEffect(() => {
-		if (!location) {
-			setData(null);
-			setError(null);
-			return;
-		}
+			const url = `https://api.tomorrow.io/v4/weather/realtime?location=${encodeURIComponent(
+				location,
+			)}&apikey=${env.VITE_TOMORROW_IO}`;
 
-		const fetchWeather = async () => {
-			setLoading(true);
-			setError(null);
-			try {
-				const url = `https://api.tomorrow.io/v4/weather/realtime?location=${encodeURIComponent(
-					location,
-				)}&apikey=${env.VITE_TOMORROW_IO}`;
+			const response = await fetch(url, {
+				headers: {
+					accept: "application/json",
+				},
+			});
 
-				const response = await fetch(url, {
-					headers: {
-						accept: "application/json",
-					},
-				});
-
-				if (!response.ok) {
-					const errorData = await response.json();
-					throw new Error(errorData.message || "Failed to fetch weather data");
-				}
-
-				const result = await response.json();
-				setData(result);
-			} catch (err) {
-				const errorMessage =
-					err instanceof Error ? err.message : "An unexpected error occurred";
-				console.error("Weather fetch error:", err);
-				setError(errorMessage);
-			} finally {
-				setLoading(false);
+			if (!response.ok) {
+				const errorData = await response.json();
+				throw new Error(errorData.message || "Failed to fetch weather data");
 			}
-		};
 
-		fetchWeather();
-	}, [location]);
+			return response.json();
+		},
+		enabled: !!location,
+		staleTime: 1000 * 60 * 15, // Cache for 15 minutes
+	});
 
-	return { data, loading, error };
+	return {
+		data: query.data,
+		loading: query.isLoading,
+		error: query.error ? (query.error as Error).message : null,
+	};
 }

@@ -1,5 +1,7 @@
+import { sql } from "drizzle-orm";
 import {
 	boolean,
+	check,
 	date,
 	index,
 	integer,
@@ -30,7 +32,6 @@ export const holidays = pgTable(
 			.references(() => countries.iso2),
 		type: text("type"), // e.g., 'public', 'religious'
 		description: text("description"),
-		createdAt: timestamp("created_at").defaultNow(),
 	},
 	(table) => [
 		index("holidays_country_start_date_idx").on(
@@ -45,6 +46,8 @@ export const categoryEnum = pgEnum("category", [
 	"religious",
 	"family",
 	"personal",
+	"work",
+	"astronomical",
 	"other",
 ]);
 
@@ -80,6 +83,58 @@ export const events = pgTable(
 	],
 );
 
+export const seasons = pgTable(
+	"seasons",
+	{
+		id: serial("id").primaryKey(),
+		name: text("name").notNull(), // spring, summer, autumn, winter
+		startDate: date("start_date").notNull(), // stored as month-day, can be used across years
+		endDate: date("end_date").notNull(), // stored as month-day, can be used across years
+		year: text("year").notNull(), // store which year this entry is for
+		countryCode: text("country_code").references(() => countries.iso2),
+	},
+	(table) => [index("seasons_country_idx").on(table.countryCode)],
+);
+
+export const zodiacSigns = pgTable(
+	"zodiac_signs",
+	{
+		id: serial("id").primaryKey(),
+		name: text("name").notNull(),
+		nameAr: text("name_ar").notNull(),
+		startDate: text("start_date").notNull(), // MM-DD
+		endDate: text("end_date").notNull(), // MM-DD
+		description: text("description"),
+	},
+	(table) => [index("zodiac_signs_idx").on(table.name)],
+);
+
+export const astronomicalHouses = pgTable(
+	"astronomical_houses",
+	{
+		id: serial("id").primaryKey(),
+		season: text("season").notNull(), // winter, spring, summer, autumn
+		period: text("period"), // e.g., المربعانية, الشبط, العقارب
+		englishPeriod: text("english_period"), // e.g., Al-Muraba'aniyah, Al-Shabat, Al-Aqrab
+		houseName: text("house_name").notNull(), // e.g., الإكليل
+		englishName: text("english_name"),
+		startDate: text("start_date").notNull(), // MM-DD
+		duration: integer("duration").notNull(), // 13 or 14 days (1st of autumn is 14)
+		description: text("description"),
+		// Zodiac Sign overlap info (from manazil.json)
+		zodiacSignNames: text("zodiac_sign_names").array(),
+		zodiacSignNamesAr: text("zodiac_sign_names_ar").array(),
+		zodiacStartDays: integer("zodiac_start_days").array(),
+		zodiacEndDays: integer("zodiac_end_days").array(),
+	},
+	(table) => [
+		check(
+			"duration_check",
+			sql`(${table.duration} = 13) OR (${table.id} IN (7, 22) AND ${table.duration} = 14)`,
+		),
+	],
+);
+
 export const todos = pgTable(
 	"todos",
 	{
@@ -100,31 +155,3 @@ export const todos = pgTable(
 		index("todos_user_id_idx").on(table.userId),
 	],
 );
-
-export const seasons = pgTable(
-	"seasons",
-	{
-		id: serial("id").primaryKey(),
-		name: text("name").notNull(), // spring, summer, autumn, winter
-		startDate: date("start_date").notNull(), // stored as month-day, can be used across years
-		endDate: date("end_date").notNull(), // stored as month-day, can be used across years
-		year: text("year").notNull(), // store which year this entry is for
-		countryCode: text("country_code").references(() => countries.iso2),
-		createdAt: timestamp("created_at").defaultNow(),
-	},
-	(table) => [index("seasons_country_idx").on(table.countryCode)],
-);
-
-export const astronomicalHouses = pgTable("astronomical_houses", {
-	id: serial("id").primaryKey(),
-	season: text("season").notNull(),
-	commonName: text("common_name").notNull(),
-	englishName: text("english_name"),
-	startDate: text("start_date").notNull(),
-	starName: text("star_name").notNull(),
-	starDays: integer("star_days").notNull(),
-	zodiacSign: text("zodiac_sign").array(),
-	zodiacDays: integer("zodiac_days").array(),
-	notes: text("notes"),
-	createdAt: timestamp("created_at").defaultNow(),
-});

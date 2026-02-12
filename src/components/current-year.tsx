@@ -1,4 +1,5 @@
-import { CalendarClock } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarClock, Milestone } from "lucide-react";
 import { useEffect, useState } from "react";
 import { SeasonProgress } from "@/components/season-progress";
 import {
@@ -28,11 +29,12 @@ export function CurrentYear({ hemisphere, latitude }: CurrentYearProps) {
 	}
 
 	const now = new Date();
-	const startOfYear = new Date(now.getFullYear(), 0, 1);
-	const endOfYear = new Date(now.getFullYear() + 1, 0, 1);
+	const currentYear = now.getFullYear();
+	const startOfYearDate = new Date(currentYear, 0, 1);
+	const endOfYearDate = new Date(currentYear + 1, 0, 1);
 
-	const totalDuration = endOfYear.getTime() - startOfYear.getTime();
-	const elapsed = now.getTime() - startOfYear.getTime();
+	const totalDuration = endOfYearDate.getTime() - startOfYearDate.getTime();
+	const elapsed = now.getTime() - startOfYearDate.getTime();
 	const progress = Math.min(Math.max((elapsed / totalDuration) * 100, 0), 100);
 
 	const daysPassed = Math.floor(elapsed / (1000 * 60 * 60 * 24));
@@ -51,6 +53,7 @@ export function CurrentYear({ hemisphere, latitude }: CurrentYearProps) {
 				bgColor: "bg-primary/10",
 				iconColor: "text-primary",
 				progressColor: "bg-primary",
+				borderColor: "border-primary",
 			};
 
 	return (
@@ -66,7 +69,7 @@ export function CurrentYear({ hemisphere, latitude }: CurrentYearProps) {
 							<span
 								className={`text-xs font-bold ${config.iconColor} drop-shadow-md`}
 							>
-								{now.getFullYear()}
+								{currentYear}
 							</span>
 							<span
 								className={`text-xs font-bold ${config.iconColor} drop-shadow-md`}
@@ -77,13 +80,56 @@ export function CurrentYear({ hemisphere, latitude }: CurrentYearProps) {
 					</SeasonProgress>
 				</div>
 			</TooltipTrigger>
-			<TooltipContent side="bottom" sideOffset={8}>
-				<div className="flex flex-col gap-1">
-					<span className="font-semibold">{now.getFullYear()} Progress</span>
-					<span>
-						Days passed: {daysPassed} / {totalDays}
-					</span>
-					<span>Days remaining: {daysRemaining}</span>
+			<TooltipContent
+				side="bottom"
+				sideOffset={12}
+				className={`p-4 border-2 ${config.borderColor} bg-white/95 dark:bg-slate-950/95 backdrop-blur-md shadow-xl`}
+			>
+				<div className="flex flex-col gap-3 min-w-[200px]">
+					<div className="flex items-center justify-between">
+						<span
+							className={`text-lg font-black uppercase tracking-tighter ${config.iconColor}`}
+						>
+							Year {currentYear}
+						</span>
+						<div
+							className={`p-1.5 rounded-full ${config.bgColor} border ${config.borderColor}/30`}
+						>
+							<Milestone className={`h-4 w-4 ${config.iconColor}`} />
+						</div>
+					</div>
+
+					<div className={`space-y-1.5 border-y ${config.borderColor}/20 py-2`}>
+						<div className="flex justify-between text-xs">
+							<span className="text-muted-foreground">Elapsed:</span>
+							<span className="font-semibold text-indigo-900 dark:text-indigo-100">
+								{daysPassed} / {totalDays} Days
+							</span>
+						</div>
+						<div className="flex justify-between text-xs">
+							<span className="text-muted-foreground">Today:</span>
+							<span className="font-semibold text-indigo-900 dark:text-indigo-100">
+								{format(now, "MMMM do")}
+							</span>
+						</div>
+						<div className="flex justify-between text-xs">
+							<span className="text-muted-foreground">Progress:</span>
+							<span className="font-semibold text-indigo-900 dark:text-indigo-100">
+								{Math.round(progress)}% of Year Complete
+							</span>
+						</div>
+					</div>
+
+					<div className="pt-1 flex items-center justify-center gap-2">
+						<div
+							className={`h-1.5 w-1.5 rounded-full ${config.progressColor} animate-ping`}
+						/>
+						<span
+							className={`text-[10px] font-bold uppercase tracking-widest ${config.iconColor}`}
+						>
+							{daysRemaining} Days Until {currentYear + 1}
+						</span>
+					</div>
 				</div>
 			</TooltipContent>
 		</Tooltip>
