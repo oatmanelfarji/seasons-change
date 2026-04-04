@@ -19,6 +19,13 @@ import { user } from "./users";
 export * from "./countries";
 export * from "./users";
 
+export const typeEnum = pgEnum("type", [
+	"national", // e.g., morrocan national day...
+	"religious", // e.g., islamic holidays...
+	"international", // e.g., new year, valentine's day, mother's day...
+	"other", // e.g., other holidays...
+]);
+
 export const holidays = pgTable(
 	"holidays",
 	{
@@ -30,7 +37,7 @@ export const holidays = pgTable(
 		countryCode: text("country_code")
 			.notNull()
 			.references(() => countries.iso2),
-		type: text("type"), // e.g., 'public', 'religious'
+		type: typeEnum("type"), // e.g., 'public', 'religious'
 		description: text("description"),
 	},
 	(table) => [

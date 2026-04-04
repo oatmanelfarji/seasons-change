@@ -1,0 +1,92 @@
+[
+  {
+    "startDate": "January 1",
+    "name": "New Year's Day",
+    "localName": "Rās lʿām",
+    "description": "The first day of the Gregorian year.",
+    "arabic": "رأس السنة الميلادية",
+    "countryCode": "MA",
+    "type": "national"
+  },
+  {
+    "startDate": "January 11",
+    "name": "Independence Manifesto Day",
+    "localName": "Taqdīm watīqat l-istiqlāl",
+    "description": "Commemorates the 1944 proclamation of independence.",
+    "arabic": "تقديم وثيقة الاستقلال",
+    "countryCode": "MA",
+    "type": "national"
+  },
+  {
+    "startDate": "January 14",
+    "name": "Amazigh New Year",
+    "localName": "Yennayer",
+    "description": "The first day of the Berber solar year.",
+    "arabic": "رأس السنة الأمازيغية",
+    "countryCode": "MA",
+    "type": "national"
+  },
+  {
+    "startDate": "May 1",
+    "name": "Labour Day",
+    "localName": "ʿīd ššuġl",
+    "description": "International Workers' Day.",
+    "arabic": "عيد الشغل",
+    "countryCode": "MA",
+    "type": "national"
+  },
+  {
+    "startDate": "July 30",
+    "name": "Throne Day",
+    "localName": "ʿīd lʿarš",
+    "description": "Commemorates the King's accession to the throne.",
+    "arabic": "عيد العرش",
+    "countryCode": "MA",
+    "type": "national"
+  },
+  {
+    "startDate": "August 14",
+    "name": "Oued Ed-Dahab Day",
+    "localName": "Ḏikrat wād ddahab",
+    "description": "Commemorates the return of the Oued Ed-Dahab province.",
+    "arabic": "استرجاع إقليم وادي الذهب",
+    "countryCode": "MA",
+    "type": "national"
+  },
+  {
+    "startDate": "August 20",
+    "name": "Revolution of the King and the People",
+    "localName": "Ṯawrat lmalik wa ššaʿb",
+    "description": "Commemorates the exile of Sultan Mohammed V.",
+    "arabic": "ثورة الملك والشعب",
+    "countryCode": "MA",
+    "type": "national"
+  },
+  {
+    "startDate": "August 21",
+    "name": "Youth Day",
+    "localName": "ʿīd ššabāb",
+    "description": "The birthdays of King Mohammed VI.",
+    "arabic": "عيد الشباب",
+    "countryCode": "MA",
+    "type": "national"
+  },
+  {
+    "startDate": "November 6",
+    "name": "Green March Day",
+    "localName": "ʿīd lmasīra lẖadraʾ",
+    "description": "Commemorates the Green March into the Spanish Sahara.",
+    "arabic": "ذكرى المسيرة الخضراء",
+    "countryCode": "MA",
+    "type": "national"
+  },
+  {
+    "startDate": "November 18",
+    "name": "Independence Day",
+    "localName": "ʿīd l-istiqlāl",
+    "description": "Commemorates the return of Sultan Mohammed V from exile.",
+    "arabic": "عيد الاستقلال",
+    "countryCode": "MA",
+    "type": "national"
+  }
+]

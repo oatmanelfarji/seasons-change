@@ -9,9 +9,15 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as HolidaysRouteImport } from './routes/holidays'
 import { Route as CountriesInfoRouteImport } from './routes/CountriesInfo'
 import { Route as IndexRouteImport } from './routes/index'
 
+const HolidaysRoute = HolidaysRouteImport.update({
+  id: '/holidays',
+  path: '/holidays',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CountriesInfoRoute = CountriesInfoRouteImport.update({
   id: '/CountriesInfo',
   path: '/CountriesInfo',
@@ -26,31 +32,42 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/CountriesInfo': typeof CountriesInfoRoute
+  '/holidays': typeof HolidaysRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/CountriesInfo': typeof CountriesInfoRoute
+  '/holidays': typeof HolidaysRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/CountriesInfo': typeof CountriesInfoRoute
+  '/holidays': typeof HolidaysRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/CountriesInfo'
+  fullPaths: '/' | '/CountriesInfo' | '/holidays'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/CountriesInfo'
-  id: '__root__' | '/' | '/CountriesInfo'
+  to: '/' | '/CountriesInfo' | '/holidays'
+  id: '__root__' | '/' | '/CountriesInfo' | '/holidays'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   CountriesInfoRoute: typeof CountriesInfoRoute
+  HolidaysRoute: typeof HolidaysRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/holidays': {
+      id: '/holidays'
+      path: '/holidays'
+      fullPath: '/holidays'
+      preLoaderRoute: typeof HolidaysRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/CountriesInfo': {
       id: '/CountriesInfo'
       path: '/CountriesInfo'
@@ -71,6 +88,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   CountriesInfoRoute: CountriesInfoRoute,
+  HolidaysRoute: HolidaysRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

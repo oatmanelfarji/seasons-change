@@ -24,11 +24,11 @@
     "lint": "biome lint",
     "check": "biome check",
     "db:generate": "drizzle-kit generate",
-    "db:diagram": "drizzle-kit generate && sql-mermaid drizzle/*.sql -o docs/schema.mmd",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:pull": "drizzle-kit pull",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "db:seed": "tsx src/db/seed.ts"
   },
   "dependencies": {
     "@t3-oss/env-core": "^0.13.8",

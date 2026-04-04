@@ -23,10 +23,16 @@ export const env = createEnv({
 	 * `process.env` or `import.meta.env`.
 	 */
 	runtimeEnv: {
-		SERVER_URL: import.meta.env.VITE_SERVER_URL || process.env.SERVER_URL,
+		SERVER_URL:
+			process.env.SERVER_URL ||
+			(typeof import.meta !== "undefined" && import.meta.env?.VITE_SERVER_URL),
 		DATABASE_URL: process.env.DATABASE_URL,
-		VITE_APP_TITLE: import.meta.env.VITE_APP_TITLE,
-		VITE_TOMORROW_IO: import.meta.env.VITE_TOMORROW_IO,
+		VITE_APP_TITLE:
+			process.env.VITE_APP_TITLE ||
+			(typeof import.meta !== "undefined" && import.meta.env?.VITE_APP_TITLE),
+		VITE_TOMORROW_IO:
+			process.env.VITE_TOMORROW_IO ||
+			(typeof import.meta !== "undefined" && import.meta.env?.VITE_TOMORROW_IO),
 	},
 
 	/**
