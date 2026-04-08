@@ -57,16 +57,20 @@ const data = {
 			isActive: true,
 			items: [
 				{
-					title: "History",
-					url: "#",
+					title: "Home",
+					url: "/",
 				},
 				{
-					title: "Starred",
-					url: "#",
+					title: "Continuous Calendar",
+					url: "/ContinuousCalendar",
 				},
 				{
-					title: "Settings",
-					url: "#",
+					title: "Country info",
+					url: "/CountriesInfo",
+				},
+				{
+					title: "Seasons",
+					url: "/seasons",
 				},
 			],
 		},

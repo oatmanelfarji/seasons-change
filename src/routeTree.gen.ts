@@ -9,10 +9,17 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SeasonsRouteImport } from './routes/seasons'
 import { Route as HolidaysRouteImport } from './routes/holidays'
 import { Route as CountriesInfoRouteImport } from './routes/CountriesInfo'
+import { Route as ContinuousCalendarRouteImport } from './routes/ContinuousCalendar'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SeasonsRoute = SeasonsRouteImport.update({
+  id: '/seasons',
+  path: '/seasons',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const HolidaysRoute = HolidaysRouteImport.update({
   id: '/holidays',
   path: '/holidays',
@@ -23,6 +30,11 @@ const CountriesInfoRoute = CountriesInfoRouteImport.update({
   path: '/CountriesInfo',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ContinuousCalendarRoute = ContinuousCalendarRouteImport.update({
+  id: '/ContinuousCalendar',
+  path: '/ContinuousCalendar',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -31,36 +43,62 @@ const IndexRoute = IndexRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/ContinuousCalendar': typeof ContinuousCalendarRoute
   '/CountriesInfo': typeof CountriesInfoRoute
   '/holidays': typeof HolidaysRoute
+  '/seasons': typeof SeasonsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/ContinuousCalendar': typeof ContinuousCalendarRoute
   '/CountriesInfo': typeof CountriesInfoRoute
   '/holidays': typeof HolidaysRoute
+  '/seasons': typeof SeasonsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/ContinuousCalendar': typeof ContinuousCalendarRoute
   '/CountriesInfo': typeof CountriesInfoRoute
   '/holidays': typeof HolidaysRoute
+  '/seasons': typeof SeasonsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/CountriesInfo' | '/holidays'
+  fullPaths:
+    | '/'
+    | '/ContinuousCalendar'
+    | '/CountriesInfo'
+    | '/holidays'
+    | '/seasons'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/CountriesInfo' | '/holidays'
-  id: '__root__' | '/' | '/CountriesInfo' | '/holidays'
+  to: '/' | '/ContinuousCalendar' | '/CountriesInfo' | '/holidays' | '/seasons'
+  id:
+    | '__root__'
+    | '/'
+    | '/ContinuousCalendar'
+    | '/CountriesInfo'
+    | '/holidays'
+    | '/seasons'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ContinuousCalendarRoute: typeof ContinuousCalendarRoute
   CountriesInfoRoute: typeof CountriesInfoRoute
   HolidaysRoute: typeof HolidaysRoute
+  SeasonsRoute: typeof SeasonsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/seasons': {
+      id: '/seasons'
+      path: '/seasons'
+      fullPath: '/seasons'
+      preLoaderRoute: typeof SeasonsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/holidays': {
       id: '/holidays'
       path: '/holidays'
@@ -75,6 +113,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CountriesInfoRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/ContinuousCalendar': {
+      id: '/ContinuousCalendar'
+      path: '/ContinuousCalendar'
+      fullPath: '/ContinuousCalendar'
+      preLoaderRoute: typeof ContinuousCalendarRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -87,8 +132,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ContinuousCalendarRoute: ContinuousCalendarRoute,
   CountriesInfoRoute: CountriesInfoRoute,
   HolidaysRoute: HolidaysRoute,
+  SeasonsRoute: SeasonsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -19,7 +19,7 @@ interface CountryProviderProps {
 
 export function CountryProvider({
 	children,
-	defaultCountryCode = "US",
+	defaultCountryCode = "MA",
 }: CountryProviderProps) {
 	const [countryCode, setCountryCode] =
 		React.useState<string>(defaultCountryCode);
