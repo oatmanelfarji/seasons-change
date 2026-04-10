@@ -26,6 +26,9 @@ export const typeEnum = pgEnum("type", [
 	"other", // e.g., other holidays...
 ]);
 
+export type SelectHoliday = typeof holidays.$inferSelect;
+export type Holiday = SelectHoliday;
+
 export const holidays = pgTable(
 	"holidays",
 	{
@@ -47,6 +50,7 @@ export const holidays = pgTable(
 		),
 	],
 );
+
 
 export const categoryEnum = pgEnum("category", [
 	"national",

@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Calendar, Info, Tag } from "lucide-react";
 import { getHolidaysByCountry } from "@/db/queries";
+import { type Holiday } from "@/db/schema";
 import { useCountry } from "@/lib/country-context";
 
 export const Route = createFileRoute("/holidays")({
@@ -39,7 +40,7 @@ function HolidaysPage() {
 				</div>
 			) : holidays && holidays.length > 0 ? (
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-					{holidays.map((holiday) => (
+					{holidays.map((holiday: Holiday) => (
 						<div
 							key={holiday.id}
 							className="group relative glass rounded-3xl p-6 shadow-xl shadow-primary/5 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 overflow-hidden border border-border/50"
