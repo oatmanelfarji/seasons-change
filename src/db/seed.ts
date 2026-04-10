@@ -21,7 +21,7 @@ async function seed() {
 	try {
 		// 1. Seed Countries
 		console.log("Seeding countries...");
-		const countriesToInsert = countriesData.map((c: any) => ({
+		const countriesToInsert = (countriesData as RawCountry[]).map((c) => ({
 			id: c.id,
 			name: c.name,
 			iso3: c.iso3,
@@ -60,7 +60,7 @@ async function seed() {
 
 		// 2. Seed Zodiac Signs
 		console.log("Seeding zodiac signs...");
-		const zodiacToInsert = zodiacData.map((z: any) => ({
+		const zodiacToInsert = (zodiacData as RawZodiac[]).map((z) => ({
 			id: z.id,
 			name: z.name,
 			nameAr: z.nameAr,
@@ -75,7 +75,7 @@ async function seed() {
 
 		// 3. Seed Astronomical Houses
 		console.log("Seeding astronomical houses...");
-		const housesToInsert = manazilData.map((m: any) => ({
+		const housesToInsert = (manazilData as RawManazil[]).map((m) => ({
 			id: m.id,
 			season: m.season,
 			period: m.period,
@@ -120,7 +120,7 @@ async function seed() {
 			return `2025-${mm}-${dd}`;
 		};
 
-		const holidaysToInsert = moroccanHolidays.map((h: any) => ({
+		const holidaysToInsert = (moroccanHolidays as RawHoliday[]).map((h) => ({
 			name: h.name,
 			localName: h.localName,
 			startDate: formatDate(h.startDate),
@@ -137,15 +137,17 @@ async function seed() {
 
 		// 4b. Seed Islamic Holidays
 		console.log("Seeding Islamic holidays...");
-		const islamicHolidaysToInsert = islamicHolidays.map((h: any) => ({
-			name: h.name,
-			localName: h.localName,
-			startDate: h.date,
-			endDate: h.date,
-			countryCode: h.countryCode,
-			type: h.type,
-			description: h.description,
-		}));
+		const islamicHolidaysToInsert = (islamicHolidays as RawHoliday[]).map(
+			(h) => ({
+				name: h.name,
+				localName: h.localName,
+				startDate: h.date,
+				endDate: h.date,
+				countryCode: h.countryCode,
+				type: h.type,
+				description: h.description,
+			}),
+		);
 
 		await db
 			.insert(schema.holidays)
@@ -154,7 +156,13 @@ async function seed() {
 
 		// 5. Seed Seasons
 		console.log("Seeding seasons...");
-		const seasonsToInsert: any[] = [];
+		const seasonsToInsert: {
+			name: string;
+			startDate: string;
+			endDate: string;
+			year: string;
+			countryCode: string;
+		}[] = [];
 
 		// Northern Hemisphere (defaulting to MA for now as an example, though seasons vary)
 		// Actually seasons table has countryCode which is NOT NULL references countries.iso2
@@ -162,8 +170,10 @@ async function seed() {
 		for (const [year, yearSeasons] of Object.entries(
 			seasonsData["northern-hemisphere"],
 		)) {
-			if (parseInt(year) >= 2025 && parseInt(year) <= 2026) {
-				yearSeasons.forEach((s: any) => {
+			if (parseInt(year, 10) >= 2025 && parseInt(year, 10) <= 2026) {
+				(
+					yearSeasons as { name: string; startDate: string; endDate: string }[]
+				).forEach((s) => {
 					seasonsToInsert.push({
 						name: s.name,
 						startDate: s.startDate,

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { type Country } from "@/components/country-selector";
+import type { Country } from "@/components/country-selector";
 import countriesData from "@/data/countries.json";
 
 interface CountryContextType {

@@ -30,7 +30,7 @@ export function getAstronomicalCalendar(year: number): HouseInstance[] {
 	return manazilData.map((house) => {
 		// Parse the MM-DD into a real Date object for the given year
 		// We use a safe parsing strategy: MM-DD-YYYY
-		let houseDate = parse(
+		const houseDate = parse(
 			`${house.startDate}-${year}`,
 			"MM-dd-yyyy",
 			new Date(),

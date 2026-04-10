@@ -51,7 +51,6 @@ export const holidays = pgTable(
 	],
 );
 
-
 export const categoryEnum = pgEnum("category", [
 	"national",
 	"religious",

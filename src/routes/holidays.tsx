@@ -3,7 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { format } from "date-fns";
 import { Calendar, Info, Tag } from "lucide-react";
 import { getHolidaysByCountry } from "@/db/queries";
-import { type Holiday } from "@/db/schema";
+import type { Holiday } from "@/db/schema";
 import { useCountry } from "@/lib/country-context";
 
 export const Route = createFileRoute("/holidays")({
