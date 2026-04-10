@@ -30,35 +30,38 @@ function HolidaysPage() {
 			</div>
 
 			{isLoading ? (
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
 					{[1, 2, 3, 4, 5, 6].map((i) => (
 						<div
 							key={i}
-							className="h-48 rounded-3xl bg-muted/20 animate-pulse border border-border/50"
+							className="h-48 rounded-xl bg-muted/20 animate-pulse border border-border/50"
+							aria-hidden="true"
 						/>
 					))}
 				</div>
 			) : holidays && holidays.length > 0 ? (
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+				<ul
+					className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5"
+					aria-label="Holiday list"
+				>
 					{holidays.map((holiday: Holiday) => (
-						<div
+						<li
 							key={holiday.id}
-							className="group relative glass rounded-3xl p-6 shadow-xl shadow-primary/5 hover:shadow-2xl hover:shadow-primary/10 transition-all duration-500 overflow-hidden border border-border/50"
+							aria-label={holiday.name}
+							className="group card-surface-interactive p-5 overflow-hidden"
 						>
-							<div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 bg-primary/5 rounded-full blur-2xl group-hover:bg-primary/10 transition-colors duration-700 pointer-events-none" />
-
-							<div className="relative z-10 flex flex-col h-full gap-4">
-								<div className="flex items-start justify-between gap-4">
-									<div className="p-3 rounded-2xl bg-primary/10 text-primary">
-										<Calendar className="w-6 h-6" />
+							<div className="flex flex-col h-full gap-3">
+								<div className="flex items-start justify-between gap-3">
+									<div className="p-2.5 rounded-lg bg-primary/10 text-primary">
+										<Calendar className="w-5 h-5" />
 									</div>
-									<div className="px-3 py-1 rounded-full bg-accent/10 text-accent text-xs font-semibold capitalize">
+									<div className="px-2.5 py-1 rounded-md bg-accent/10 text-accent text-xs font-semibold capitalize">
 										{holiday.type || "Holiday"}
 									</div>
 								</div>
 
 								<div className="flex flex-col gap-1">
-									<h3 className="text-xl font-bold text-foreground group-hover:text-primary transition-colors duration-300">
+									<h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors duration-300">
 										{holiday.name}
 									</h3>
 									{holiday.localName && (
@@ -68,7 +71,7 @@ function HolidaysPage() {
 									)}
 								</div>
 
-								<div className="flex flex-col gap-2 mt-auto pt-4 border-t border-border/50">
+								<div className="flex flex-col gap-2 mt-auto pt-3 border-t border-border/40">
 									<div className="flex items-center gap-2 text-sm text-muted-foreground">
 										<Info className="w-4 h-4" />
 										<span>
@@ -82,13 +85,13 @@ function HolidaysPage() {
 									)}
 								</div>
 							</div>
-						</div>
+						</li>
 					))}
-				</div>
+				</ul>
 			) : (
-				<div className="flex flex-col items-center justify-center p-12 glass rounded-3xl border border-dashed border-border/50 min-h-[400px]">
-					<div className="p-6 rounded-full bg-muted/10 mb-4">
-						<Tag className="w-12 h-12 text-muted-foreground opacity-50" />
+				<div className="flex flex-col items-center justify-center p-12 card-surface border-dashed min-h-[400px]">
+					<div className="p-5 rounded-xl bg-muted/10 mb-4">
+						<Tag className="w-10 h-10 text-muted-foreground" />
 					</div>
 					<h2 className="text-xl font-semibold">No holidays found</h2>
 					<p className="text-muted-foreground text-center max-w-sm mt-2">

@@ -1,16 +1,14 @@
 "use client";
 
 import {
-	AudioWaveform,
 	BookOpen,
 	Bot,
-	Command,
-	Frame,
-	GalleryVerticalEnd,
+	Calendar,
+	Compass,
+	Globe,
 	Map as MapIcon,
-	PieChart,
 	Settings2,
-	SquareTerminal,
+	Sun,
 } from "lucide-react";
 
 import { NavMain } from "@/components/nav-main";
@@ -34,26 +32,16 @@ const data = {
 	},
 	teams: [
 		{
-			name: "Acme Inc",
-			logo: GalleryVerticalEnd,
-			plan: "Enterprise",
-		},
-		{
-			name: "Acme Corp.",
-			logo: AudioWaveform,
-			plan: "Startup",
-		},
-		{
-			name: "Evil Corp.",
-			logo: Command,
-			plan: "Free",
+			name: "Seasons Change",
+			logo: Sun,
+			plan: "Explorer",
 		},
 	],
 	navMain: [
 		{
-			title: "Playground",
+			title: "Explore",
 			url: "#",
-			icon: SquareTerminal,
+			icon: Compass,
 			isActive: true,
 			items: [
 				{
@@ -61,11 +49,15 @@ const data = {
 					url: "/",
 				},
 				{
+					title: "Holidays",
+					url: "/holidays",
+				},
+				{
 					title: "Continuous Calendar",
 					url: "/ContinuousCalendar",
 				},
 				{
-					title: "Country info",
+					title: "Country Info",
 					url: "/CountriesInfo",
 				},
 				{
@@ -142,14 +134,14 @@ const data = {
 	],
 	projects: [
 		{
-			name: "Design Engineering",
+			name: "World Data",
 			url: "#",
-			icon: Frame,
+			icon: Globe,
 		},
 		{
-			name: "Sales & Marketing",
+			name: "Calendar Systems",
 			url: "#",
-			icon: PieChart,
+			icon: Calendar,
 		},
 		{
 			name: "Travel",

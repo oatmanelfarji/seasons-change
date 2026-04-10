@@ -91,14 +91,14 @@ export function WeatherWidget() {
 	const weatherDesc = weatherDescriptions[weatherCode] || "Unknown";
 
 	return (
-		<div className="relative flex flex-col items-center gap-6 h-full justify-center p-16 group-hover:scale-105 transition-transform duration-500">
+		<div className="relative flex flex-col items-center gap-6 h-full justify-center p-6 transition-colors duration-300">
 			<div className="flex items-center justify-between w-full">
 				<div className="flex flex-col">
 					<h2 className="text-lg font-bold tracking-tight font-display">
 						{location}
 					</h2>
 				</div>
-				<div className="p-2 rounded-xl bg-primary/10 backdrop-blur-xl border border-primary/20 shadow-inner group-hover:scale-110 transition-transform duration-500">
+				<div className="p-2 rounded-lg bg-primary/10 backdrop-blur-sm border border-primary/20 shadow-inner transition-transform duration-300">
 					{weatherIcon}
 				</div>
 			</div>
@@ -140,11 +140,11 @@ export function WeatherWidget() {
 				].map((item) => (
 					<div
 						key={item.label}
-						className="flex flex-col items-center gap-1 p-3 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 transition-all hover:scale-105 hover:bg-white/10"
+						className="flex flex-col items-center gap-1 p-3 rounded-lg bg-white/5 backdrop-blur-sm border border-white/10 transition-colors duration-300 hover:bg-white/10"
 					>
 						<item.icon className={`w-4 h-4 ${item.color}`} />
 						<span className="text-sm font-black">{item.value}</span>
-						<span className="text-[10px] uppercase text-muted-foreground font-bold opacity-60">
+						<span className="text-[10px] uppercase text-muted-foreground font-bold">
 							{item.label}
 						</span>
 					</div>

@@ -211,11 +211,21 @@
   }
 
   .glass {
-    @apply backdrop-blur-xl bg-white/10 dark:bg-white/5 border border-white/20 dark:border-white/10;
+    @apply backdrop-blur-md bg-white/15 dark:bg-white/8 border border-white/20 dark:border-white/10;
   }
   
   .glass-strong {
-    @apply backdrop-blur-2xl bg-white/20 dark:bg-white/10 border border-white/30 dark:border-white/20;
+    @apply backdrop-blur-xl bg-white/25 dark:bg-white/12 border border-white/30 dark:border-white/20;
+  }
+
+  .card-surface {
+    @apply bg-card/80 dark:bg-card/60 backdrop-blur-sm border border-border/60 rounded-xl;
+  }
+
+  .card-surface-interactive {
+    @apply bg-card/80 dark:bg-card/60 backdrop-blur-sm border border-border/60 rounded-xl
+           transition-all duration-300
+           hover:border-primary/30 hover:shadow-sm;
   }
   
   .gradient-primary {
@@ -266,7 +276,7 @@
     z-index: -2;
     overflow: hidden;
     filter: blur(100px);
-    opacity: 0.4;
+    opacity: 0.15;
     pointer-events: none;
   }
 
