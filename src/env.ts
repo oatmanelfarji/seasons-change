@@ -5,6 +5,7 @@ export const env = createEnv({
 	server: {
 		SERVER_URL: z.string().url().optional(),
 		DATABASE_URL: z.string().url(),
+		TOMORROW_IO_API_KEY: z.string().min(1),
 	},
 
 	/**
@@ -15,7 +16,6 @@ export const env = createEnv({
 
 	client: {
 		VITE_APP_TITLE: z.string().min(1).optional(),
-		VITE_TOMORROW_IO: z.string().min(1),
 	},
 
 	/**
@@ -27,12 +27,10 @@ export const env = createEnv({
 			process.env.SERVER_URL ||
 			(typeof import.meta !== "undefined" && import.meta.env?.VITE_SERVER_URL),
 		DATABASE_URL: process.env.DATABASE_URL,
+		TOMORROW_IO_API_KEY: process.env.TOMORROW_IO_API_KEY,
 		VITE_APP_TITLE:
 			process.env.VITE_APP_TITLE ||
 			(typeof import.meta !== "undefined" && import.meta.env?.VITE_APP_TITLE),
-		VITE_TOMORROW_IO:
-			process.env.VITE_TOMORROW_IO ||
-			(typeof import.meta !== "undefined" && import.meta.env?.VITE_TOMORROW_IO),
 	},
 
 	/**

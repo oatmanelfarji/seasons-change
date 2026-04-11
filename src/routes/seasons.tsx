@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { seasonConfig } from "@/lib/season-utils";
+import { cn } from "@/lib/utils";
 import zodiacSigns from "../data/zodiac_sign.json";
 
 export const Route = createFileRoute("/seasons")({
@@ -10,18 +12,18 @@ function RouteComponent() {
 		<div className="flex flex-col gap-12 w-full max-w-6xl mx-auto p-4 md:p-8">
 			{/* Seasons Grid */}
 			<div className="grid grid-cols-4 h-32 rounded-xl overflow-hidden shadow-lg border border-zinc-800/50">
-				<div className="bg-blue-500 text-zinc-900 flex items-center justify-center font-bold text-xl uppercase tracking-wider">
-					<h1>winter</h1>
-				</div>
-				<div className="bg-green-500 text-zinc-900 flex items-center justify-center font-bold text-xl uppercase tracking-wider">
-					<h1>spring</h1>
-				</div>
-				<div className="bg-yellow-500 text-zinc-900 flex items-center justify-center font-bold text-xl uppercase tracking-wider">
-					<h1>summer</h1>
-				</div>
-				<div className="bg-orange-500 text-zinc-900 flex items-center justify-center font-bold text-xl uppercase tracking-wider">
-					<h1>autumn</h1>
-				</div>
+				{Object.entries(seasonConfig).map(([name, config]) => (
+					<div
+						key={name}
+						className={cn(
+							"flex items-center justify-center font-bold text-xl uppercase tracking-wider",
+							config.bgColor,
+							config.iconColor,
+						)}
+					>
+						<h1>{name}</h1>
+					</div>
+				))}
 			</div>
 
 			{/* Zodiac Timeline */}

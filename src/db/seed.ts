@@ -9,6 +9,72 @@ import seasonsData from "../data/seasons.json";
 import zodiacData from "../data/zodiac_sign.json";
 import * as schema from "./schema";
 
+interface RawCountry {
+	id: number;
+	name: string;
+	iso3: string;
+	iso2: string;
+	numeric_code: string;
+	phonecode: string;
+	capital: string;
+	currency: string;
+	currency_name: string;
+	currency_symbol: string;
+	tld: string;
+	native: string;
+	region: string;
+	subregion: string;
+	nationality: string;
+	timezones: any;
+	translations: any;
+	latitude: string;
+	longitude: string;
+	emoji: string;
+	emojiU: string;
+	wikiDataId: string;
+	population: number | null;
+	gdp: number | null;
+	region_id: number;
+	subregion_id: number;
+	area_sq_km: number | null;
+	postal_code_format: string | null;
+	postal_code_regex: string | null;
+}
+
+interface RawZodiac {
+	id: number;
+	name: string;
+	nameAr: string;
+	startDate: string;
+	endDate: string;
+}
+
+interface RawManazil {
+	id: number;
+	season: string;
+	period: string;
+	englishPeriod: string;
+	house: string;
+	englishName: string;
+	startDate: string;
+	duration: number;
+	description: string;
+	zodiacSign: string[];
+	zodiacSignAr: string[];
+	zodiacStartDays: number[];
+	zodiacEndDays: number[];
+}
+
+interface RawHoliday {
+	name: string;
+	localName: string;
+	startDate?: string;
+	date?: string; // For Islamic holidays
+	countryCode: string;
+	type: "national" | "religious" | "international" | "other";
+	description: string;
+}
+
 const pool = new Pool({
 	connectionString: process.env.DATABASE_URL,
 });
@@ -123,10 +189,10 @@ async function seed() {
 		const holidaysToInsert = (moroccanHolidays as RawHoliday[]).map((h) => ({
 			name: h.name,
 			localName: h.localName,
-			startDate: formatDate(h.startDate),
-			endDate: formatDate(h.startDate), // Same day for now
+			startDate: formatDate(h.startDate!),
+			endDate: formatDate(h.startDate!), // Same day for now
 			countryCode: h.countryCode,
-			type: h.type,
+			type: h.type as any,
 			description: h.description,
 		}));
 
@@ -141,10 +207,10 @@ async function seed() {
 			(h) => ({
 				name: h.name,
 				localName: h.localName,
-				startDate: h.date,
-				endDate: h.date,
+				startDate: h.date!,
+				endDate: h.date!,
 				countryCode: h.countryCode,
-				type: h.type,
+				type: h.type as any,
 				description: h.description,
 			}),
 		);
