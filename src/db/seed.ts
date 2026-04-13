@@ -7,7 +7,7 @@ import moroccanHolidays from "../data/MoroccanHolidays.json";
 import manazilData from "../data/manazil.json";
 import seasonsData from "../data/seasons.json";
 import zodiacData from "../data/zodiac_sign.json";
-import * as schema from "./schema";
+import * as schema from "./schema/index";
 
 interface RawCountry {
 	id: number;

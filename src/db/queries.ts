@@ -3,7 +3,7 @@ import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { env } from "@/env";
 import { db } from "./index";
-import { holidays } from "./schema";
+import { holidays } from "./schema/index";
 
 export interface WeatherData {
 	data: {
@@ -46,16 +46,31 @@ export const getWeather = createServerFn({
 			location,
 		)}&apikey=${env.TOMORROW_IO_API_KEY}`;
 
-		const response = await fetch(url, {
-			headers: {
-				accept: "application/json",
-			},
-		});
+		const maxRetries = 3;
+		let lastError: Error | null = null;
 
-		if (!response.ok) {
-			const errorData = await response.json();
-			throw new Error(errorData.message || "Failed to fetch weather data");
+		for (let attempt = 1; attempt <= maxRetries; attempt++) {
+			try {
+				const response = await fetch(url, {
+					headers: {
+						accept: "application/json",
+					},
+				});
+
+				if (!response.ok) {
+					const errorData = await response.json();
+					throw new Error(errorData.message || `Failed to fetch weather data (Status: ${response.status})`);
+				}
+
+				return response.json();
+			} catch (error) {
+				lastError = error as Error;
+				if (attempt < maxRetries) {
+					// Exponential backoff: 1s, 2s, 4s
+					await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt - 1) * 1000));
+				}
+			}
 		}
 
-		return response.json();
+		throw new Error(`Weather API failed after ${maxRetries} attempts. Last error: ${lastError?.message}`);
 	});
