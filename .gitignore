@@ -12,5 +12,8 @@ count.txt
 .vinxi
 todos.json
 dev-docs
-
+dev-docs/*
 TODO.md
+dev-docs/Seasonal Theme Implementation.md
+dev-docs/start@latest.md
+
