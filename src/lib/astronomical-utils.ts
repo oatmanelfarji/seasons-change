@@ -65,19 +65,12 @@ export function getAstronomicalCalendar(year: number): HouseInstance[] {
 export function getHouseForDate(date: Date): HouseInstance | null {
 	const year = date.getFullYear();
 
-	// We check both the current year's calendar and the previous year's
-	// to handle the December crossover (the astronomical year starts Dec 7).
-	const yearsToCheck = [year - 1, year, year + 1];
+	// Check previous, current, and next year to handle crossovers
+	const years = [year - 1, year, year + 1];
 
-	for (const y of yearsToCheck) {
-		const calendar = getAstronomicalCalendar(y);
-		const house = calendar.find(
-			(h) => date >= h.calculatedStartDate && date <= h.calculatedEndDate,
-		);
-		if (house) return house;
-	}
-
-	return null;
+	return years
+		.flatMap((y) => getAstronomicalCalendar(y))
+		.find((h) => date >= h.calculatedStartDate && date <= h.calculatedEndDate) || null;
 }
 
 /**

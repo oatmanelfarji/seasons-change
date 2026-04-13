@@ -52,36 +52,14 @@ export function getCurrentSeason(
 ): Season | null {
 	const now = new Date();
 	const year = now.getFullYear();
-	// Use local time instead of UTC to avoid timezone issues (e.g., getting "tomorrow's" date)
-	const currentDate = now.toLocaleDateString("en-CA"); // YYYY-MM-DD format in local time
+	const currentDate = now.toLocaleDateString("en-CA");
 
-	// Default to northern-hemisphere for equator or anything else
 	const hemisphereKey =
 		hemisphere === "southern" ? "southern-hemisphere" : "northern-hemisphere";
-
 	const data = seasonsData as SeasonsData;
 
-	/* 
-    Check current year seasons first.
-  */
-	const seasons = data[hemisphereKey][year.toString()];
-	if (seasons) {
-		for (const season of seasons) {
-			if (currentDate >= season.startDate && currentDate <= season.endDate) {
-				return season;
-			}
-		}
-	}
-
-	// If not found, check the previous year (for Winter crossover)
-	const prevYearSeasons = data[hemisphereKey][(year - 1).toString()];
-	if (prevYearSeasons) {
-		for (const season of prevYearSeasons) {
-			if (currentDate >= season.startDate && currentDate <= season.endDate) {
-				return season;
-			}
-		}
-	}
-
-	return null;
+	// Check current year and previous year (to handle December crossover)
+	return [year.toString(), (year - 1).toString()]
+		.flatMap((y) => data[hemisphereKey][y] || [])
+		.find((s) => currentDate >= s.startDate && currentDate <= s.endDate) || null;
 }

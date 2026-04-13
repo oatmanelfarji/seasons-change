@@ -51,12 +51,33 @@ A premium, characterful dashboard that dynamically transforms its atmosphere, co
 
 ## 🛠️ Tech Stack
 
-- **Framework**: [React](https://react.dev/) + [Vite](https://vitejs.dev/)
+- **Framework**: [React 19](https://react.dev/) + [Vite 7](https://vitejs.dev/)
 - **Routing**: [TanStack Router](https://tanstack.com/router)
+- **Data Fetching**: [TanStack Query](https://tanstack.com/query)
 - **Styling**: [Tailwind CSS v4](https://tailwindcss.com/)
+- **Database**: [Drizzle ORM](https://orm.drizzle.team/) + [PostgreSQL](https://www.postgresql.org/)
 - **State Management**: [React Context](https://react.dev/learn/passing-data-deeply-with-context)
 - **Icons**: [Lucide React](https://lucide.dev/)
 - **Linting & Formatting**: [Biome](https://biomejs.dev/)
+- **Testing**: [Vitest](https://vitest.dev/)
+
+## 🤖 CI/CD and Automation
+
+This project uses **GitHub Actions** for automated quality gates and **Dependabot** for dependency management.
+
+- **Quality Pipeline**: On every pull request and push to `main`, the following checks are run:
+  - **Linting**: Verified via Biome.
+  - **Type Safety**: Verified via TypeScript `tsc --noEmit`.
+  - **Unit Tests**: Executed via Vitest.
+  - **Build Verification**: Ensures the production bundle can be successfully created.
+- **Dependency Updates**: Weekly automated scanning via Dependabot.
+
+## 📐 Development Standards
+
+We adhere to the **Code Simplification** principle:
+- **Clarity over Cleverness**: We prefer readable code over compact or "clever" implementations.
+- **Chesterton's Fence**: We ensure we understand why code exists before refactoring it.
+- **Automated Enforcement**: All standards are enforced via CI/CD.
 
 ## 🎨 Design Philosophy
 

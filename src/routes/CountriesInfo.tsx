@@ -14,6 +14,7 @@ import {
 	Tag,
 	Users,
 } from "lucide-react";
+import * as React from "react";
 import { useEffect, useState } from "react";
 import { useCountry } from "@/lib/country-context";
 
@@ -63,6 +64,100 @@ function CountriesInfo() {
 	const country = selectedCountry as unknown as FullCountry;
 	const [mounted, setMounted] = useState(false);
 
+	const sections = React.useMemo(() => {
+		if (!country) return [];
+		return [
+			{
+				id: "general",
+				title: "General Information",
+				icon: <Info className="w-5 h-5" />,
+				items: [
+					{
+						label: "Native Name",
+						value: country.native,
+						icon: <Languages className="w-4 h-4" />,
+					},
+					{
+						label: "Capital",
+						value: country.capital,
+						icon: <Anchor className="w-4 h-4" />,
+					},
+					{
+						label: "Nationality",
+						value: country.nationality,
+						icon: <Tag className="w-4 h-4" />,
+					},
+					{
+						label: "Region",
+						value: country.region,
+						icon: <Globe className="w-4 h-4" />,
+					},
+					{
+						label: "Subregion",
+						value: country.subregion,
+						icon: <MapPin className="w-4 h-4" />,
+					},
+				],
+			},
+			{
+				id: "demographics",
+				title: "Demographics & Economy",
+				icon: <Users className="w-5 h-5" />,
+				items: [
+					{
+						label: "Population",
+						value: country.population?.toLocaleString(),
+						icon: <Users className="w-4 h-4" />,
+					},
+					{
+						label: "Area",
+						value: country.area_sq_km
+							? `${country.area_sq_km.toLocaleString()} km²`
+							: null,
+						icon: <SquareStack className="w-4 h-4" />,
+					},
+					{
+						label: "Currency",
+						value: `${country.currency_name} (${country.currency_symbol})`,
+						icon: <Coins className="w-4 h-4" />,
+					},
+					{
+						label: "GDP",
+						value: country.gdp ? `$${country.gdp.toLocaleString()}` : "N/A",
+						icon: <Hash className="w-4 h-4" />,
+					},
+				],
+			},
+			{
+				id: "codes",
+				title: "Codes & Connectivity",
+				icon: <Phone className="w-5 h-5" />,
+				items: [
+					{
+						label: "ISO Alpha-2",
+						value: country.iso2,
+						icon: <Tag className="w-4 h-4" />,
+					},
+					{
+						label: "ISO Alpha-3",
+						value: country.iso3,
+						icon: <Tag className="w-4 h-4" />,
+					},
+					{
+						label: "Phone Code",
+						value: `+${country.phonecode}`,
+						icon: <Phone className="w-4 h-4" />,
+					},
+					{
+						label: "Top Level Domain",
+						value: country.tld,
+						icon: <Globe className="w-4 h-4" />,
+					},
+				],
+			},
+		];
+	}, [country]);
+
 	useEffect(() => {
 		setMounted(true);
 	}, []);
@@ -88,96 +183,6 @@ function CountriesInfo() {
 		);
 	}
 
-	const sections = [
-		{
-			id: "general",
-			title: "General Information",
-			icon: <Info className="w-5 h-5" />,
-			items: [
-				{
-					label: "Native Name",
-					value: country.native,
-					icon: <Languages className="w-4 h-4" />,
-				},
-				{
-					label: "Capital",
-					value: country.capital,
-					icon: <Anchor className="w-4 h-4" />,
-				},
-				{
-					label: "Nationality",
-					value: country.nationality,
-					icon: <Tag className="w-4 h-4" />,
-				},
-				{
-					label: "Region",
-					value: country.region,
-					icon: <Globe className="w-4 h-4" />,
-				},
-				{
-					label: "Subregion",
-					value: country.subregion,
-					icon: <MapPin className="w-4 h-4" />,
-				},
-			],
-		},
-		{
-			id: "demographics",
-			title: "Demographics & Economy",
-			icon: <Users className="w-5 h-5" />,
-			items: [
-				{
-					label: "Population",
-					value: country.population?.toLocaleString(),
-					icon: <Users className="w-4 h-4" />,
-				},
-				{
-					label: "Area",
-					value: country.area_sq_km
-						? `${country.area_sq_km.toLocaleString()} km²`
-						: null,
-					icon: <SquareStack className="w-4 h-4" />,
-				},
-				{
-					label: "Currency",
-					value: `${country.currency_name} (${country.currency_symbol})`,
-					icon: <Coins className="w-4 h-4" />,
-				},
-				{
-					label: "GDP",
-					value: country.gdp ? `$${country.gdp.toLocaleString()}` : "N/A",
-					icon: <Hash className="w-4 h-4" />,
-				},
-			],
-		},
-		{
-			id: "codes",
-			title: "Codes & Connectivity",
-			icon: <Phone className="w-5 h-5" />,
-			items: [
-				{
-					label: "ISO Alpha-2",
-					value: country.iso2,
-					icon: <Tag className="w-4 h-4" />,
-				},
-				{
-					label: "ISO Alpha-3",
-					value: country.iso3,
-					icon: <Tag className="w-4 h-4" />,
-				},
-				{
-					label: "Phone Code",
-					value: `+${country.phonecode}`,
-					icon: <Phone className="w-4 h-4" />,
-				},
-				{
-					label: "Top Level Domain",
-					value: country.tld,
-					icon: <Globe className="w-4 h-4" />,
-				},
-			],
-		},
-	];
 
 	return (
 		<div className="max-w-6xl mx-auto px-4 py-8 space-y-12 stagger-in">
