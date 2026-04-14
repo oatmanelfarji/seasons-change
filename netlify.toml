@@ -1,0 +1,14 @@
+[build]
+  command = "pnpm build"
+  publish = ".output/public"
+
+[build.environment]
+  NODE_VERSION = "20"
+  # Ensures Nitro builds for the Netlify environment specifically
+  NITRO_PRESET = "netlify"
+
+[[redirects]]
+  # This serves as a fallback for client-side routing and Nitro server functions
+  from = "/*"
+  to = "/.netlify/functions/server"
+  status = 200
